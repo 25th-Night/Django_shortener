@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     # Add
     "debug_toolbar",  # Django Debug Toolbar
     "rest_framework",
+    "django_seed",
     # App
     "shortener",
 ]
@@ -146,3 +147,6 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# 로그인을 위한 페이지 지정
+LOGIN_URL = "/login"
