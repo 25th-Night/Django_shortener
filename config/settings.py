@@ -50,10 +50,17 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    
+    # Add
+    "debug_toolbar",  # Django Debug Toolbar
+    "rest_framework",
+    "django_seed",
     # App
     "shortener",
 ]
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]  # Django Debug Toolbar
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -63,6 +70,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",  # Django Debug Toolbar
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -139,3 +147,6 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# 로그인을 위한 페이지 지정
+LOGIN_URL = "/login"
