@@ -3,7 +3,11 @@ from shortener.models import Users
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from shortener.forms import RegisterForm
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 
@@ -49,3 +53,41 @@ def register(request):
     else:
         form = RegisterForm()
         return render(request, "register.html", {"form": form})
+
+
+def login_view(request):
+    msg = None
+    is_ok = False
+    if request.method == "POST":
+        form = AuthenticationForm(request, request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get("username")
+            raw_password = form.cleaned_data.get("password")
+            user = authenticate(username=username, password=raw_password)
+            if user is not None:
+                login(request, user)
+                is_ok = True
+        else:
+            msg = "올바른 유저ID와 패스워드를 입력하세요."
+    else:
+        form = AuthenticationForm()
+
+    for visible in form.visible_fields():
+        visible.field.widget.attrs["placeholder"] = "유저ID" if visible.name == "username" else "패스워드"
+        visible.field.widget.attrs["class"] = "form-control"
+    return render(request, "login.html", {"form": form, "msg": msg, "is_ok": is_ok})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("index")
+
+
+@login_required
+def list_view(request):
+    page = int(request.GET.get("p", 1))
+    users = Users.objects.all().order_by("-id")
+    paginator = Paginator(users, 10)
+    users = paginator.get_page(page)
+
+    return render(request, "boards.html", {"users": users})
