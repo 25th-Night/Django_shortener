@@ -21,6 +21,13 @@ def index(request):
     return render(request, "base.html", {"welcome_msg": "Hello FastCampus!"})
 
 
+def url_list(request):
+    return render(
+        request,
+        "url_list.html",
+    )
+    
+
 @csrf_exempt
 def get_user(request, user_id):
     print(user_id)
