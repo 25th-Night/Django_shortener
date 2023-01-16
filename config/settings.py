@@ -36,9 +36,14 @@ TEMPLATE_DIR = BASE_DIR / "templates"
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+ENV = os.environ.get("DJANGO_ENV", "dev")
 
-ALLOWED_HOSTS = []
+if ENV == "dev":
+    DEBUG = True
+else:
+    DEBUG = False
+
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -58,6 +63,12 @@ INSTALLED_APPS = [
     "shortener",
 ]
 
+# if DEBUG:
+#     INSTALLED_APPS += [
+#         "debug_toolbar",
+#         "django_seed",
+#     ]
+
 INTERNAL_IPS = [
     "127.0.0.1",
 ]  # Django Debug Toolbar
@@ -72,6 +83,11 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",  # Django Debug Toolbar
 ]
+
+# if DEBUG:
+#     INSTALLED_APPS += [
+#         "debug_toolbar.middleware.DebugToolbarMiddleware",  # Django Debug Toolbar
+#     ]
 
 ROOT_URLCONF = "config.urls"
 
@@ -100,7 +116,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        # "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
 
