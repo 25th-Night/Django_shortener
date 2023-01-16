@@ -47,7 +47,6 @@ ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
-AUTH_USER_MODEL = "shortener.Users"
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -113,11 +112,24 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        # "NAME": BASE_DIR / "db.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": secrets["AWS_MySQL"]["NAME"],
+        "USER": secrets["AWS_MySQL"]["USER"],
+        "PASSWORD": secrets["AWS_MySQL"]["PASSWORD"],
+        "HOST": secrets["AWS_MySQL"]["HOST"],
+        "PORT": 3306,
+        "OPTIONS" : {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
