@@ -57,13 +57,13 @@ def login_view(request):
             remember_me = form.cleaned_data.get("remember_me")
             msg = "올바른 유저ID와 패스워드를 입력하세요."
             try:
-                user = Users.objects.get(email=email)
+                user = Users.objects.get(user__email=email)
             except Users.DoesNotExist:
                 msg = "올바른 유저ID와 패스워드를 입력하세요."
             else:
-                if user.check_password(raw_password):
+                if user.user.check_password(raw_password):
                     msg = None
-                    login(request, user)
+                    login(request, user.user)
                     is_ok = True
                     request.session["remember_me"] = remember_me
 
