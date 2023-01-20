@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from shortener.models import ShortenedUrls, Statistic
 from django.contrib.auth.decorators import login_required
 from shortener.utils import url_count_changer
-from ratelimit.decorators import ratelimit
+from django_ratelimit.decorators import ratelimit
 from django.contrib.gis.geoip2 import GeoIP2
 
 
