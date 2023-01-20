@@ -32,6 +32,9 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # TEMPLATES
 TEMPLATE_DIR = BASE_DIR / "templates"
 
+# GEOIP
+GEOIP_PATH = os.path.join(BASE_DIR, "geolite2")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -58,6 +61,7 @@ INSTALLED_APPS = [
     "debug_toolbar",  # Django Debug Toolbar
     "rest_framework",
     "django_seed",
+    "django_user_agents",
     # App
     "shortener",
 ]
@@ -81,6 +85,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",  # Django Debug Toolbar
+    "django_user_agents.middleware.UserAgentMiddleware",
 ]
 
 # if DEBUG:
