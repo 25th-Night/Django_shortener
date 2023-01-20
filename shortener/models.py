@@ -70,6 +70,7 @@ class ShortenedUrls(TimeStampedModel):
     prefix = models.CharField(max_length=50, default=rand_letter)
     creator = models.ForeignKey(Users, on_delete=models.CASCADE)
     target_url = models.CharField(max_length=2000)
+    click = models.BigIntegerField(default=0)
     shortened_url = models.CharField(max_length=6, default=rand_string)
     create_via = models.CharField(max_length=8, choices=UrlCreatedVia.choices, default=UrlCreatedVia.WEBSITE)
     expired_at = models.DateTimeField(null=True)
@@ -83,3 +84,7 @@ class ShortenedUrls(TimeStampedModel):
                 ]
             ),
         ]
+
+    def clicked(self):
+        self.click += 1
+        self.save()
