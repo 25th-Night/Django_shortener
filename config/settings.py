@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_seed",
     "django_user_agents",
+    "drf_yasg",
     # App
     "shortener",
 ]
