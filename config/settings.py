@@ -32,6 +32,9 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # TEMPLATES
 TEMPLATE_DIR = BASE_DIR / "templates"
 
+# GEOIP
+GEOIP_PATH = os.path.join(BASE_DIR, "geolite2")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -47,7 +50,6 @@ ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
-AUTH_USER_MODEL = "shortener.Users"
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -59,6 +61,7 @@ INSTALLED_APPS = [
     "debug_toolbar",  # Django Debug Toolbar
     "rest_framework",
     "django_seed",
+    "django_user_agents",
     # App
     "shortener",
 ]
@@ -68,6 +71,8 @@ INSTALLED_APPS = [
 #         "debug_toolbar",
 #         "django_seed",
 #     ]
+
+REST_FRAMEWORK = {"DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination", "PAGE_SIZE": 20}
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -82,6 +87,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",  # Django Debug Toolbar
+    "django_user_agents.middleware.UserAgentMiddleware",
 ]
 
 # if DEBUG:
@@ -113,11 +119,24 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        # "NAME": BASE_DIR / "db.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": secrets["AWS_MySQL"]["NAME"],
+        "USER": secrets["AWS_MySQL"]["USER"],
+        "PASSWORD": secrets["AWS_MySQL"]["PASSWORD"],
+        "HOST": secrets["AWS_MySQL"]["HOST"],
+        "PORT": 3306,
+        "OPTIONS": {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
