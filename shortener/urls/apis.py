@@ -10,6 +10,7 @@ from django.http.response import Http404
 from rest_framework import status
 from rest_framework.response import Response
 from shortener.utils import MsgOk, url_count_changer
+from rest_framework.decorators import action, renderer_classes
 
 
 class UrlListView(viewsets.ModelViewSet):
@@ -53,4 +54,13 @@ class UrlListView(viewsets.ModelViewSet):
         # GET ALL
         queryset = self.get_queryset().all()
         serializer = UrlListSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["get"])
+    def add_click(self, request, pk=None):
+        queryset = self.get_queryset().filter(pk=pk, creator_id=request.user.id)
+        if not queryset.exists():
+            raise Http404
+        rtn = queryset.first().clicked()
+        serializer = UrlListSerializer(rtn)
         return Response(serializer.data)
