@@ -72,6 +72,8 @@ INSTALLED_APPS = [
 #         "django_seed",
 #     ]
 
+REST_FRAMEWORK = {"DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination", "PAGE_SIZE": 20}
+
 INTERNAL_IPS = [
     "127.0.0.1",
 ]  # Django Debug Toolbar
