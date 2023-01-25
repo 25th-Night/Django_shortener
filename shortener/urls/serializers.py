@@ -43,5 +43,4 @@ class UrlCreateSerializer(serializers.Serializer):
                 print(e)
             else:
                 url_count_changer(request, True)
-        print(instance)
         return instance
