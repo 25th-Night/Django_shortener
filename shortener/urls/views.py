@@ -5,7 +5,10 @@ from shortener.models import ShortenedUrls, Statistic
 from django.contrib.auth.decorators import login_required
 from shortener.utils import url_count_changer
 from django_ratelimit.decorators import ratelimit
+from datetime import datetime, timedelta
 from django.db.models import Count
+from django.utils.html import json_script
+from shortener.utils import get_kst, url_count_changer
 
 
 @ratelimit(key="ip", rate="3/m")
@@ -31,7 +34,7 @@ def url_redirect(request, prefix, url):
 
 def url_list(request):
     get_list = ShortenedUrls.objects.order_by("-created_at").filter(creator_id=request.user.id).all()
-    return render(request, "url_list.html", {"list": get_list})
+    return render(request, "url_list.html")
 
 
 @login_required
@@ -83,3 +86,12 @@ def url_change(request, action, url_id):
         return render(request, "url_create.html", {"form": form, "is_update": True})
 
     return redirect("url_list")
+
+
+def statistic_view(request, url_id: int):
+    url_info = get_object_or_404(ShortenedUrls, pk=url_id)
+    base_qs = Statistic.objects.filter(shortened_url_id=url_id, created_at__gte=get_kst() - timedelta(days=14))
+    clicks = base_qs.values("created_at__date").annotate(clicks=Count("id")).order_by("created_at__date")
+    date_list = [c.get("created_at__date").strftime("%Y-%m-%d") for c in clicks]
+    click_list = [c.get("clicks") for c in clicks]
+    return render(request, "statistics.html", {"url": url_info, "kst": get_kst(), "date_list": date_list, "click_list": click_list})
