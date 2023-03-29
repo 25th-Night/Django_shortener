@@ -13,7 +13,8 @@ def dict_slice(d: Dict, n: int):
 
 def dict_filter(d: Dict, filter_list: List):
     filtered = {}
-    for k, v in d.items():
-        if k in filter_list:
-            filtered[k] = v
+    if d is not None:
+        for k, v in d.items():
+            if k in filter_list:
+                filtered[k] = v
     return filtered
