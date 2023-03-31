@@ -13,6 +13,7 @@ from shortener.utils import MsgOk, url_count_changer, get_kst
 from rest_framework.decorators import action, renderer_classes
 from datetime import timedelta
 from django.db.models.aggregates import Count, Min
+from django.core.cache import cache
 
 
 class UrlListView(viewsets.ModelViewSet):
@@ -54,7 +55,10 @@ class UrlListView(viewsets.ModelViewSet):
 
     def list(self, request):
         # GET ALL
-        queryset = self.get_queryset().filter(creator_id=request.user.id).all()
+        queryset = cache.get("url_list")
+        if not queryset:
+            queryset = self.get_queryset().filter(creator_id=request.user.id).all()
+            cache.set("url_list", queryset, 20)
         serializer = UrlListSerializer(queryset, many=True)
         return Response(serializer.data)
 

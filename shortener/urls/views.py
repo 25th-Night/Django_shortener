@@ -9,6 +9,8 @@ from datetime import datetime, timedelta
 from django.db.models import Count
 from django.utils.html import json_script
 from shortener.utils import get_kst, url_count_changer
+from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_page
 
 
 @ratelimit(key="ip", rate="3/m")
@@ -32,9 +34,9 @@ def url_redirect(request, prefix, url):
     return redirect(target, permanent=is_permanent)
 
 
+@login_required
 def url_list(request):
-    get_list = ShortenedUrls.objects.order_by("-created_at").filter(creator_id=request.user.id).all()
-    return render(request, "url_list.html")
+    return render(request, "url_list.html", {})
 
 
 @login_required
@@ -88,6 +90,8 @@ def url_change(request, action, url_id):
     return redirect("url_list")
 
 
+@cache_page(10)
+@login_required
 def statistic_view(request, url_id: int):
     url_info = get_object_or_404(ShortenedUrls, pk=url_id)
     base_qs = Statistic.objects.filter(shortened_url_id=url_id, created_at__gte=get_kst() - timedelta(days=14))
