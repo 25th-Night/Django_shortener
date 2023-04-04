@@ -55,10 +55,10 @@ class UrlListView(viewsets.ModelViewSet):
 
     def list(self, request):
         # GET ALL
-        queryset = cache.get("url_list")
+        queryset = cache.get("url_lists")
         if not queryset:
             queryset = self.get_queryset().filter(creator_id=request.user.id).all()
-            cache.set("url_list", queryset, 20)
+            cache.set("url_lists", queryset, 20)
         serializer = UrlListSerializer(queryset, many=True)
         return Response(serializer.data)
 

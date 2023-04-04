@@ -189,3 +189,21 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # 로그인을 위한 페이지 지정
 LOGIN_URL = "/login"
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": os.path.join(BASE_DIR, "cache_file"),
+    }
+}
+
+"""
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+"""
