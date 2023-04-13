@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     # App
     "shortener",
+    "jet_django",
 ]
 
 # if DEBUG:
@@ -207,3 +208,7 @@ CACHES = {
 }
 
 """
+
+# JET-Django settings
+JET_PROJECT = "shortener"
+JET_TOKEN = "1cd24d85-1cbd-4267-846b-ec6aef8def7f"
