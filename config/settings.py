@@ -92,6 +92,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",  # Django Debug Toolbar
     "django_user_agents.middleware.UserAgentMiddleware",
+    "shortener.middleware.ShrinkersMiddleware",
 ]
 
 # if DEBUG:
