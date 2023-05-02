@@ -3,7 +3,6 @@ from shortener.urls.serializers import UserSerializer, UrlListSerializer, UrlCre
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
-from rest_framework import generics
 from rest_framework.decorators import renderer_classes
 from rest_framework.renderers import JSONRenderer
 from django.http.response import Http404
@@ -19,7 +18,7 @@ from django.core.cache import cache
 class UrlListView(viewsets.ModelViewSet):
     queryset = ShortenedUrls.objects.order_by("-created_at")
     serializer_class = UrlListSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]  # permissions.IsAdminUser
 
     def create(self, request):
         # POST METHOD
@@ -50,15 +49,16 @@ class UrlListView(viewsets.ModelViewSet):
         if not queryset.exists():
             raise Http404
         queryset.delete()
+        cache.delete(f"url_lists_{request.users_id}")
         url_count_changer(request, False)
         return MsgOk()
 
     def list(self, request):
         # GET ALL
-        queryset = cache.get("url_lists")
+        queryset = cache.get(f"url_lists_{request.users_id}")
         if not queryset:
             queryset = self.get_queryset().filter(creator_id=request.user.id).all()
-            cache.set("url_lists", queryset, 20)
+            cache.set(f"url_lists_{request.users_id}", queryset, 20)
         serializer = UrlListSerializer(queryset, many=True)
         return Response(serializer.data)
 
