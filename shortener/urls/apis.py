@@ -24,6 +24,7 @@ class UrlListView(viewsets.ModelViewSet):
         # POST METHOD
         serializer = UrlCreateSerializer(data=request.data)
         if serializer.is_valid():
+            cache.delete(f"url_lists_{request.users_id}")
             rtn = serializer.create(request, serializer.data)
             return Response(UrlListSerializer(rtn).data, status=status.HTTP_201_CREATED)
         pass
