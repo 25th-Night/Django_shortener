@@ -8,7 +8,6 @@ from shortener.urls.decorators import admin_only
 @login_required
 @admin_only
 def url_list(request):
-    # command_handler()
     urls = (
         ShortenedUrls.objects.order_by("-id")
         .prefetch_related(
@@ -20,4 +19,5 @@ def url_list(request):
         )
         .all()
     )
+
     return render(request, "admin_url_list.html", {"urls": urls})

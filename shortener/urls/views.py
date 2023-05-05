@@ -98,8 +98,19 @@ def url_change(request, action, url_id):
 @login_required
 def statistic_view(request, url_id: int):
     url_info = get_object_or_404(ShortenedUrls, pk=url_id)
-    base_qs = Statistic.objects.filter(shortened_url_id=url_id, created_at__gte=get_kst() - timedelta(days=14))
-    clicks = base_qs.values("created_at__date").annotate(clicks=Count("id")).order_by("created_at__date")
+    base_qs = Statistic.objects.filter(shortened_url_id=url_id, created_at__gte=get_kst()-timedelta(days=14))
+    clicks = (
+        base_qs.values("created_at__date")
+        .annotate(clicks=Count("id"))
+        .values("created_at__date", "clicks")
+        .order_by("created_at__date")
+    )
+    url_info = ShortenedUrls.objects.filter(pk=url_id).prefetch_related("trackingparams_set").first()
     date_list = [c.get("created_at__date").strftime("%Y-%m-%d") for c in clicks]
     click_list = [c.get("clicks") for c in clicks]
-    return render(request, "statistics.html", {"url": url_info, "kst": get_kst(), "date_list": date_list, "click_list": click_list})
+    stats = Statistic.objects.filter(shortened_url_id=url_id).all()
+    return render(
+        request, 
+        "statistics.html", 
+        {"url": url_info, "kst": get_kst(), "date_list": date_list, "click_list": click_list, "stats": stats}
+        )
