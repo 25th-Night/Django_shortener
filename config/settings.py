@@ -58,19 +58,19 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Add
-    "debug_toolbar",  # Django Debug Toolbar
     "rest_framework",
     "django_seed",
     "django_user_agents",
+    "drf_yasg",
     # App
     "shortener",
+    "jet_django",
 ]
 
-# if DEBUG:
-#     INSTALLED_APPS += [
-#         "debug_toolbar",
-#         "django_seed",
-#     ]
+if DEBUG:
+    INSTALLED_APPS += [
+        "debug_toolbar",
+    ]
 
 REST_FRAMEWORK = {"DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination", "PAGE_SIZE": 20}
 
@@ -81,19 +81,33 @@ INTERNAL_IPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    # "django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.common.CommonMiddleware",
+    # "django.middleware.cache.FetchFromCacheMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",  # Django Debug Toolbar
     "django_user_agents.middleware.UserAgentMiddleware",
+    "shortener.middleware.ShrinkersMiddleware",
 ]
 
 # if DEBUG:
 #     INSTALLED_APPS += [
 #         "debug_toolbar.middleware.DebugToolbarMiddleware",  # Django Debug Toolbar
 #     ]
+
+# if DEBUG:
+#     STATIC_URL = "/static/"
+# else:
+#     GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+#         os.path.join(BASE_DIR, "shrinkers/service_key.json")
+#     )
+#     DEFAULT_FILE_STORAGE = "config.storage_backends.GoogleCloudMediaStorage"
+#     STATICFILES_STORAGE = "config.storage_backends.GoogleCloudStaticStorage"
+#     GS_STATIC_BUCKET_NAME = "shrinkers-bucket-fc"
+#     STATIC_URL = "https://storage.googleapis.com/{}/statics/".format(GS_STATIC_BUCKET_NAME)
 
 ROOT_URLCONF = "config.urls"
 
@@ -186,3 +200,25 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # 로그인을 위한 페이지 지정
 LOGIN_URL = "/login"
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": os.path.join(BASE_DIR, "cache_file"),
+    }
+}
+
+"""
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+"""
+
+# JET-Django settings
+JET_PROJECT = "shortener"
+JET_TOKEN = "1cd24d85-1cbd-4267-846b-ec6aef8def7f"

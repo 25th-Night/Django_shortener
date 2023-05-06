@@ -1,3 +1,4 @@
+import re
 from django.contrib.auth.models import User
 from shortener.models import Users, ShortenedUrls
 from rest_framework import serializers
@@ -26,6 +27,12 @@ class UrlListSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class BrowerStatSerializer(serializers.Serializer):
+    web_browser = serializers.CharField(max_length=50)
+    count = serializers.IntegerField()
+    date = serializers.DateField(source="created_at__date", required=False)
+
+
 class UrlCreateSerializer(serializers.Serializer):
     nick_name = serializers.CharField(max_length=50)
     target_url = serializers.CharField(max_length=2000)
@@ -33,7 +40,8 @@ class UrlCreateSerializer(serializers.Serializer):
 
     def create(self, request, data, commit=True):
         instance = ShortenedUrls()
-        instance.creator_id = request.user.id
+        users = Users.objects.filter(request.users_id).first()
+        instance.creator = users
         instance.category = data.get("category", None)
         instance.target_url = data.get("target_url").strip()
         if commit:

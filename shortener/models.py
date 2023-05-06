@@ -41,6 +41,7 @@ class Organization(TimeStampedModel):
 class Users(models.Model):
     user = models.OneToOneField(U, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100, null=True)
+    telegram_username = models.CharField(max_length=100, null=True)
     url_count = models.IntegerField(default=0)
     organization = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, null=True)
 
@@ -96,6 +97,12 @@ class ShortenedUrls(TimeStampedModel):
         return self
 
 
+class Schedules(TimeStampedModel):
+    job_name = models.CharField(max_length=50)
+    flag_name = models.CharField(max_length=50)
+    value = models.IntegerField(default=0)
+
+
 class Statistic(TimeStampedModel):
     class ApproachDevice(models.TextChoices):
         PC = "pc"
@@ -118,7 +125,8 @@ class Statistic(TimeStampedModel):
         self.device = self.ApproachDevice.MOBILE if request.user_agent.is_mobile else self.ApproachDevice.TABLET if request.user_agent.is_tablet else self.ApproachDevice.PC
         self.device_os = request.user_agent.os.family
         t = TrackingParams.get_tracking_params(url.id)
-        self.custom_params = dict_slice(dict_filter(params, t), 5)
+        if params:
+            self.custom_params = dict_slice(dict_filter(params, t), 5)
 
         try:
             country = location_finder(request)
@@ -138,3 +146,20 @@ class TrackingParams(TimeStampedModel):
     @classmethod
     def get_tracking_params(cls, shortened_url_id: int):
         return TrackingParams.objects.filter(shortened_url_id=shortened_url_id).values_list("params", flat=True)
+
+
+
+class BackOfficeLogs(TimeStampedModel):
+    endpoint = models.CharField(max_length=2000, blank=True, null=True)
+    body = models.JSONField(null=True)
+    method = models.CharField(max_length=20, blank=True, null=True)
+    user_id = models.IntegerField(blank=True, null=True)
+    ip = models.CharField(max_length=30, blank=True, null=True)
+    status_code = models.IntegerField(blank=True, null=True)
+
+
+class DailyVisitors(models.Model):
+    visit_date = models.DateField()
+    visits = models.IntegerField(default=0)
+    totals = models.IntegerField(default=0)
+    last_updated_on = models.DateTimeField(auto_now=True)
