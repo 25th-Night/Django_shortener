@@ -41,7 +41,7 @@ def send_email(**kwargs):
     if mailing_list:
         EMAIL_ID = secrets["GMAIL_ACCOUNT"]["EMAIL_ID"]
         EMAIL_PW = secrets["GMAIL_ACCOUNT"]["EMAIL_PW"]
-        yag = yagmail.SMTP({EMAIL_ID: "Shrinkers X 패캠"}, EMAIL_PW)
+        yag = yagmail.SMTP({EMAIL_ID: "URL 단축 서비스 Shortener"}, EMAIL_PW)
         # https://myaccount.google.com/u/1/lesssecureapps
         contents = [email_content.format(mailing_list[0])]
-        yag.send(mailing_list[1], "이렇게 한번 보내봅시다.", contents)
+        yag.send(mailing_list[1], "안녕하세요, 메일을 보내드립니다.", contents)
