@@ -2,7 +2,10 @@ from typing import Text
 import requests
 from shortener.models import Schedules, ShortenedUrls, Users
 
-access_token = "6210706141:AAHJEeflX4Ac8SFV0U_uwh22o5w5bWYCYzY"
+from config.settings import secrets
+
+
+access_token = secrets["TELEGRAM_ACCESS_TOKEN"]
 
 
 def get_chats():
