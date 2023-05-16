@@ -22,6 +22,7 @@ from config.settings import DEBUG
 
 from shortener.urls.views import url_redirect
 from shortener.urls.urls import router as url_router
+from shortener.scheduler import cron_jobs
 
 
 from django.conf.urls import url
@@ -72,3 +73,5 @@ if DEBUG:
     urlpatterns += [
         path("__debug__/", include(debug_toolbar.urls)),  # Django Debug Tool
     ]
+
+cron_jobs()
